@@ -1,0 +1,25 @@
+# Netlify Configuration — Stellar Sequence
+[build]
+  publish = "."
+  command = ""
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# API routes → Netlify Functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/content"
+  status = 200
+
+# SPA fallback (only for paths without file extension)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"

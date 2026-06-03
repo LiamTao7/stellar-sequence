@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="恒星序列服务 — AIGC培训、AI游戏开发、XR方案、数字化转型、脑机项目">
+  <title>服务 — 恒星序列 Stellar Sequence</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23a882ff'/><circle cx='16' cy='16' r='4' fill='%23ffffff'/></svg>">
+  <style>
+    .admin-bar { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
+    .admin-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: var(--white); border: none; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(168,130,255,0.4); transition: all 0.3s ease; }
+    .admin-btn:hover { transform: scale(1.1); }
+  </style>
+</head>
+<body>
+
+  <canvas id="starfield"></canvas>
+
+  <nav class="nav" id="mainNav">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">&#10038;</div>
+      <span>恒星序列</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="/">首页</a>
+      <a href="about.html">关于</a>
+      <a href="products.html" class="active">服务</a>
+      <a href="contact.html">联系</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <section class="hero" style="min-height: 45vh;">
+      <div class="hero-inner">
+        <div class="hero-tagline">服务</div>
+        <h1 class="hero-title" style="font-size: clamp(2.5rem, 6vw, 5rem);">
+          五大领域。<br><em>一个星座。</em>
+        </h1>
+        <p class="hero-desc">
+          每一项服务都是我们网络中的一颗恒星——相互连接、彼此补充，建立在共同的AI创意基础之上。
+        </p>
+      </div>
+    </section>
+
+    <!-- 01 AIGC -->
+    <section class="product-section reveal" id="course">
+      <div class="container">
+        <div class="product-block">
+          <div class="product-visual-block">&#127916;</div>
+          <div class="product-text">
+            <div class="product-num">01</div>
+            <h2>AIGC 影视与游戏课程培训</h2>
+            <p>为零基础创作者量身打造。课程涵盖AI剧本创作、角色生成、场景构图与动画渲染——掌握用AI创作电影级内容的全流程技能。项目制学习模式，确保每位学员毕业即拥有完整作品集。</p>
+            <div class="service-tags">
+              <span class="service-tag">零基础入门</span>
+              <span class="service-tag">AI剧本创作</span>
+              <span class="service-tag">角色生成</span>
+              <span class="service-tag">场景搭建</span>
+              <span class="service-tag">动画流程</span>
+              <span class="service-tag">作品集输出</span>
+            </div>
+            <div style="margin-top: 28px;">
+              <a href="contact.html" class="btn btn-outline">咨询详情 &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 AI Game -->
+    <section class="product-section reveal" id="game">
+      <div class="container">
+        <div class="product-block">
+          <div class="product-visual-block">&#127918;</div>
+          <div class="product-text">
+            <div class="product-num">02</div>
+            <h2>AI 游戏定制</h2>
+            <p>智能NPC行为树、程序化关卡生成、AI驱动动态叙事。从独立游戏到商业发布，我们提供以AI为核心的全流程游戏开发服务——基于Unity与Unreal Engine。</p>
+            <div class="service-tags">
+              <span class="service-tag">智能NPC</span>
+              <span class="service-tag">程序化关卡</span>
+              <span class="service-tag">动态叙事</span>
+              <span class="service-tag">AI美术管线</span>
+              <span class="service-tag">Unity/Unreal</span>
+              <span class="service-tag">全流程开发</span>
+            </div>
+            <div style="margin-top: 28px;">
+              <a href="contact.html" class="btn btn-outline">咨询详情 &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 XR -->
+    <section class="product-section reveal" id="xr">
+      <div class="container">
+        <div class="product-block">
+          <div class="product-visual-block">&#128302;</div>
+          <div class="product-text">
+            <div class="product-num">03</div>
+            <h2>XR 项目定制</h2>
+            <p>AR/VR/MR覆盖教育、文旅、工业与医疗领域。AI驱动的交互设计与高品质沉浸式渲染相结合。从概念到多平台部署，端到端交付。</p>
+            <div class="service-tags">
+              <span class="service-tag">增强现实</span>
+              <span class="service-tag">虚拟现实</span>
+              <span class="service-tag">混合现实</span>
+              <span class="service-tag">教育应用</span>
+              <span class="service-tag">文旅体验</span>
+              <span class="service-tag">工业仿真</span>
+            </div>
+            <div style="margin-top: 28px;">
+              <a href="contact.html" class="btn btn-outline">咨询详情 &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 Digital -->
+    <section class="product-section reveal" id="digital">
+      <div class="container">
+        <div class="product-block">
+          <div class="product-visual-block">&#128187;</div>
+          <div class="product-text">
+            <div class="product-num">04</div>
+            <h2>数字化定制</h2>
+            <p>数字孪生、智能分析、流程自动化——AI驱动企业效率跃升。从智慧工厂到智能营销，我们构建面向未来的数字化基础设施。</p>
+            <div class="service-tags">
+              <span class="service-tag">数字孪生</span>
+              <span class="service-tag">智能分析</span>
+              <span class="service-tag">流程自动化</span>
+              <span class="service-tag">AI决策支持</span>
+              <span class="service-tag">智慧工厂</span>
+              <span class="service-tag">云端部署</span>
+            </div>
+            <div style="margin-top: 28px;">
+              <a href="contact.html" class="btn btn-outline">咨询详情 &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 BCI -->
+    <section class="product-section reveal" id="bci">
+      <div class="container">
+        <div class="product-block">
+          <div class="product-visual-block">&#129504;</div>
+          <div class="product-text">
+            <div class="product-num">05</div>
+            <h2>脑机项目定制</h2>
+            <p>人机交互的终极前沿。神经信号采集与解码、运动想象识别、SSVEP范式设计、神经反馈训练——我们构建意识与机器之间的桥梁。</p>
+            <div class="service-tags">
+              <span class="service-tag">神经信号</span>
+              <span class="service-tag">脑电解码</span>
+              <span class="service-tag">运动想象</span>
+              <span class="service-tag">SSVEP</span>
+              <span class="service-tag">神经反馈</span>
+              <span class="service-tag">临床研发</span>
+            </div>
+            <div style="margin-top: 28px;">
+              <a href="contact.html" class="btn btn-outline">咨询详情 &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-icon">&#10038;</div>
+          <span>恒星序列</span>
+        </div>
+        <p>创意AI工作室，深耕影视、游戏、XR与神经接口交叉领域。</p>
+      </div>
+      <div class="footer-col">
+        <h4>导航</h4>
+        <a href="/">首页</a>
+        <a href="about.html">关于</a>
+        <a href="products.html">服务</a>
+        <a href="contact.html">联系</a>
+      </div>
+      <div class="footer-col">
+        <h4>服务</h4>
+        <a href="products.html#course">AIGC 培训</a>
+        <a href="products.html#game">AI 游戏</a>
+        <a href="products.html#xr">XR 方案</a>
+        <a href="products.html#bci">脑机项目</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 恒星序列 Stellar Sequence. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <div class="admin-bar">
+    <a href="/admin" class="admin-btn" title="管理后台">&#9881;</a>
+  </div>
+
+  <script src="js/starfield.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dynamic.js"></script>
+</body>
+</html>

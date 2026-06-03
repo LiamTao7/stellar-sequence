@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="恒星序列 Stellar Sequence — AIGC影视与游戏设计培训、AI游戏定制、XR项目定制、数字化定制、脑机项目定制">
+  <title>恒星序列 Stellar Sequence — 创意AI工作室</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23a882ff'/><circle cx='16' cy='16' r='4' fill='%23ffffff'/></svg>">
+  <style>
+    .hero-stats { display: flex; gap: 60px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .hero-stat h4 { font-family: var(--font-display); font-size: 1.8rem; font-weight: 200; color: var(--white); }
+    .hero-stat span { font-size: 0.78rem; color: var(--text-secondary); letter-spacing: 0.5px; }
+    .matrix-section { padding: 0 0 80px; }
+    .showcase-section { padding: 0 0 120px; }
+    .showcase-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 48px; flex-wrap: wrap; gap: 24px; }
+    .admin-bar { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
+    .admin-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: var(--white); border: none; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(168,130,255,0.4); transition: all 0.3s ease; }
+    .admin-btn:hover { transform: scale(1.1); }
+  </style>
+</head>
+<body>
+
+  <canvas id="starfield"></canvas>
+
+  <!-- Nav -->
+  <nav class="nav" id="mainNav">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon" id="logoIcon">&#10038;</div>
+      <span id="siteName">恒星序列</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="/" class="active">首页</a>
+      <a href="about.html">关于</a>
+      <a href="products.html">服务</a>
+      <a href="contact.html">联系</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+      <div class="hero-inner">
+        <div class="hero-tagline" id="heroTagline">创意AI工作室 &bull; 始于2023</div>
+        <h1 class="hero-title" id="heroTitle">
+          我们构建<br>
+          <em>智能</em>创意<br>
+          生态体系。
+        </h1>
+        <p class="hero-desc" id="heroDesc">
+          从AIGC影视制作、游戏设计，到XR体验与脑机接口——恒星序列提供课程培训与定制解决方案，
+          定义人类创造力的下一个时代。
+        </p>
+        <div class="hero-actions">
+          <a href="products.html" class="btn btn-primary">探索服务</a>
+          <a href="contact.html" class="btn btn-outline">联系我们</a>
+        </div>
+        <div class="hero-stats" id="heroStats">
+          <div class="hero-stat"><h4>200+</h4><span>已交付项目</span></div>
+          <div class="hero-stat"><h4>5</h4><span>核心领域</span></div>
+          <div class="hero-stat"><h4>98%</h4><span>客户满意度</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stellar Matrix -->
+    <section class="matrix-section reveal" id="matrix">
+      <div class="container">
+        <div class="section-label" id="matrixLabel">星座网络</div>
+        <h2 class="section-title" id="matrixTitle">恒星矩阵</h2>
+        <p class="section-desc" id="matrixDesc">每个节点代表一项能力。它们共同构成了我们创意智能的星座网络。</p>
+      </div>
+      <div class="matrix-container" style="margin-top: 40px;">
+        <canvas id="stellarMatrix"></canvas>
+      </div>
+    </section>
+
+    <!-- Media Showcase -->
+    <section class="showcase-section reveal" id="showcase">
+      <div class="container">
+        <div class="showcase-header">
+          <div>
+            <div class="section-label">作品展示</div>
+            <h2 class="section-title" style="margin-bottom: 0;">动态创作</h2>
+          </div>
+          <a href="products.html" class="btn btn-text">查看全部服务 &rarr;</a>
+        </div>
+        <div class="media-showcase">
+          <!-- Video -->
+          <div class="media-card" id="featuredVideo" style="aspect-ratio: 16/9;">
+            <span class="media-label">精选项目</span>
+            <div class="media-placeholder">
+              <span class="icon">&#9654;</span>
+              <span>AIGC 影视样片</span>
+              <span style="font-size: 0.75rem; opacity: 0.5;">上传视频展示作品</span>
+            </div>
+          </div>
+          <!-- Image Gallery -->
+          <div class="image-gallery" id="imageGallery">
+            <div class="gallery-item" data-idx="0">
+              <div class="gallery-placeholder">
+                <span class="icon">&#127912;</span>
+                <span>AI 艺术</span>
+              </div>
+            </div>
+            <div class="gallery-item" data-idx="1">
+              <div class="gallery-placeholder">
+                <span class="icon">&#127918;</span>
+                <span>游戏设计</span>
+              </div>
+            </div>
+            <div class="gallery-item" data-idx="2">
+              <div class="gallery-placeholder">
+                <span class="icon">&#128302;</span>
+                <span>XR 体验</span>
+              </div>
+            </div>
+            <div class="gallery-item" data-idx="3">
+              <div class="gallery-placeholder">
+                <span class="icon">&#129504;</span>
+                <span>脑机接口</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Services -->
+    <section class="section reveal" id="services">
+      <div class="container">
+        <div class="section-label">核心能力</div>
+        <h2 class="section-title">五大创意智能<br>领域</h2>
+        <p class="section-desc" style="margin-bottom: 60px;">从基础培训到前沿脑机接口——我们覆盖全频谱创意科技服务。</p>
+        <div class="services-grid" id="servicesGrid">
+          <div class="service-card">
+            <div class="service-index">01</div>
+            <h3>AIGC 影视与游戏课程培训</h3>
+            <p>零基础到专业级的全流程课程。AI剧本创作、角色生成、场景搭建、动画渲染——学习用AI创作电影级内容。项目制教学，毕业即拥有完整作品集。</p>
+            <div class="service-tags">
+              <span class="service-tag">零基础入门</span>
+              <span class="service-tag">AI剧本</span>
+              <span class="service-tag">角色生成</span>
+              <span class="service-tag">动画渲染</span>
+            </div>
+          </div>
+          <div class="service-card">
+            <div class="service-index">02</div>
+            <h3>AI 游戏定制</h3>
+            <p>智能NPC行为系统、程序化关卡生成、AI驱动动态叙事。我们打造拥有真正AI灵魂的游戏——从独立游戏到商业大作，全流程定制开发。</p>
+            <div class="service-tags">
+              <span class="service-tag">智能NPC</span>
+              <span class="service-tag">程序化生成</span>
+              <span class="service-tag">Unity/Unreal</span>
+              <span class="service-tag">全流程</span>
+            </div>
+          </div>
+          <div class="service-card">
+            <div class="service-index">03</div>
+            <h3>XR 项目定制</h3>
+            <p>AR/VR/MR覆盖教育、文旅、工业、医疗。高品质沉浸式体验，AI驱动交互设计，让虚拟与现实无缝融合。端到端多平台交付。</p>
+            <div class="service-tags">
+              <span class="service-tag">AR/VR/MR</span>
+              <span class="service-tag">教育应用</span>
+              <span class="service-tag">工业仿真</span>
+              <span class="service-tag">多平台</span>
+            </div>
+          </div>
+          <div class="service-card">
+            <div class="service-index">04</div>
+            <h3>数字化定制</h3>
+            <p>数字孪生、智能数据分析、流程自动化——AI驱动企业效率跃升。从智慧工厂到智能营销，我们构建面向未来的数字化基础设施。</p>
+            <div class="service-tags">
+              <span class="service-tag">数字孪生</span>
+              <span class="service-tag">智能分析</span>
+              <span class="service-tag">自动化</span>
+              <span class="service-tag">云端部署</span>
+            </div>
+          </div>
+          <div class="service-card">
+            <div class="service-index">05</div>
+            <h3>脑机项目定制</h3>
+            <p>探索人机交互的终极边界。神经信号采集与解码、运动想象识别、SSVEP范式设计、神经反馈训练——构建意识与机器的桥梁。</p>
+            <div class="service-tags">
+              <span class="service-tag">神经信号</span>
+              <span class="service-tag">脑电解码</span>
+              <span class="service-tag">SSVEP</span>
+              <span class="service-tag">神经反馈</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="section reveal">
+      <div class="container">
+        <div class="stats-bar" id="statsBar">
+          <div class="stat-cell">
+            <div class="stat-number" data-target="200">0+</div>
+            <div class="stat-label">已交付项目</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number" data-target="5000">0+</div>
+            <div class="stat-label">课程学员</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number" data-target="50">0+</div>
+            <div class="stat-label">合作伙伴</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number" data-target="15">0+</div>
+            <div class="stat-label">覆盖城市</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-icon">&#10038;</div>
+          <span>恒星序列</span>
+        </div>
+        <p>创意AI工作室，深耕影视、游戏、XR与神经接口交叉领域。</p>
+      </div>
+      <div class="footer-col">
+        <h4>导航</h4>
+        <a href="/">首页</a>
+        <a href="about.html">关于</a>
+        <a href="products.html">服务</a>
+        <a href="contact.html">联系</a>
+      </div>
+      <div class="footer-col">
+        <h4>服务</h4>
+        <a href="products.html#course">AIGC 培训</a>
+        <a href="products.html#game">AI 游戏</a>
+        <a href="products.html#xr">XR 方案</a>
+        <a href="products.html#bci">脑机项目</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 恒星序列 Stellar Sequence. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Admin -->
+  <div class="admin-bar">
+    <a href="/admin" class="admin-btn" title="管理后台">&#9881;</a>
+  </div>
+
+  <script src="js/starfield.js"></script>
+  <script src="js/matrix.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dynamic.js"></script>
+</body>
+</html>

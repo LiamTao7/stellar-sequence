@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="联系恒星序列 — 咨询AIGC培训、AI游戏开发、XR方案、数字化转型、脑机项目">
+  <title>联系我们 — 恒星序列 Stellar Sequence</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23a882ff'/><circle cx='16' cy='16' r='4' fill='%23ffffff'/></svg>">
+  <style>
+    .admin-bar { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
+    .admin-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: var(--white); border: none; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(168,130,255,0.4); transition: all 0.3s ease; }
+    .admin-btn:hover { transform: scale(1.1); }
+  </style>
+</head>
+<body>
+
+  <canvas id="starfield"></canvas>
+
+  <nav class="nav" id="mainNav">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">&#10038;</div>
+      <span>恒星序列</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="/">首页</a>
+      <a href="about.html">关于</a>
+      <a href="products.html">服务</a>
+      <a href="contact.html" class="active">联系</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <section class="hero" style="min-height: 40vh;">
+      <div class="hero-inner">
+        <div class="hero-tagline">联系我们</div>
+        <h1 class="hero-title" style="font-size: clamp(2.5rem, 6vw, 5rem);">
+          开始<em>对话。</em>
+        </h1>
+        <p class="hero-desc">
+          无论您是在探索AI培训、规划游戏项目，还是对脑机接口充满好奇——我们随时倾听。
+        </p>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="contact-layout">
+          <div class="contact-form">
+            <form id="contactForm">
+              <div class="form-group">
+                <label for="name">姓名</label>
+                <input type="text" id="name" name="name" placeholder="您的姓名" required>
+              </div>
+              <div class="form-group">
+                <label for="email">邮箱</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+              </div>
+              <div class="form-group">
+                <label for="phone">电话（选填）</label>
+                <input type="tel" id="phone" name="phone" placeholder="+86">
+              </div>
+              <div class="form-group">
+                <label for="service">关注方向</label>
+                <select id="service" name="service">
+                  <option value="">请选择服务</option>
+                  <option value="course">AIGC 影视与游戏课程培训</option>
+                  <option value="game">AI 游戏定制</option>
+                  <option value="xr">XR 项目定制</option>
+                  <option value="digital">数字化定制</option>
+                  <option value="bci">脑机项目定制</option>
+                  <option value="other">其他咨询</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="message">留言</label>
+                <textarea id="message" name="message" placeholder="请描述您的项目或需求..." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 8px;">
+                发送消息
+              </button>
+            </form>
+          </div>
+
+          <div class="contact-info-column">
+            <div class="contact-line">
+              <div class="label">邮箱</div>
+              <div class="value">contact@stellarsequence.com</div>
+            </div>
+            <div class="contact-line">
+              <div class="label">响应时间</div>
+              <div class="value">24小时内回复</div>
+            </div>
+            <div class="contact-line">
+              <div class="label">工作时间</div>
+              <div class="value">周一至周五 9:00–18:00（北京时间）</div>
+            </div>
+            <div class="contact-line">
+              <div class="label">地址</div>
+              <div class="value">中国</div>
+            </div>
+            <div class="contact-line" style="border-bottom: none; margin-top: 12px;">
+              <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">
+                如需紧急联系，请直接发送邮件。我们的商务团队会在一个工作日内回复每一条咨询。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-icon">&#10038;</div>
+          <span>恒星序列</span>
+        </div>
+        <p>创意AI工作室，深耕影视、游戏、XR与神经接口交叉领域。</p>
+      </div>
+      <div class="footer-col">
+        <h4>导航</h4>
+        <a href="/">首页</a>
+        <a href="about.html">关于</a>
+        <a href="products.html">服务</a>
+        <a href="contact.html">联系</a>
+      </div>
+      <div class="footer-col">
+        <h4>服务</h4>
+        <a href="products.html#course">AIGC 培训</a>
+        <a href="products.html#game">AI 游戏</a>
+        <a href="products.html#xr">XR 方案</a>
+        <a href="products.html#bci">脑机项目</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 恒星序列 Stellar Sequence. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <div class="admin-bar">
+    <a href="/admin" class="admin-btn" title="管理后台">&#9881;</a>
+  </div>
+
+  <script src="js/starfield.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dynamic.js"></script>
+</body>
+</html>

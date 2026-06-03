@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="关于恒星序列 — 我们的团队、愿景与使命">
+  <title>关于我们 — 恒星序列 Stellar Sequence</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23a882ff'/><circle cx='16' cy='16' r='4' fill='%23ffffff'/></svg>">
+  <style>
+    .admin-bar { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
+    .admin-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: var(--white); border: none; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(168,130,255,0.4); transition: all 0.3s ease; }
+    .admin-btn:hover { transform: scale(1.1); }
+  </style>
+</head>
+<body>
+
+  <canvas id="starfield"></canvas>
+
+  <nav class="nav" id="mainNav">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">&#10038;</div>
+      <span>恒星序列</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="/">首页</a>
+      <a href="about.html" class="active">关于</a>
+      <a href="products.html">服务</a>
+      <a href="contact.html">联系</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <section class="hero" style="min-height: 50vh;">
+      <div class="hero-inner">
+        <div class="hero-tagline">关于我们</div>
+        <h1 class="hero-title" style="font-size: clamp(2.5rem, 6vw, 5rem);">
+          我们是<br><em>恒星序列</em>
+        </h1>
+        <p class="hero-desc">
+          一支由AI研究者、影视制作人、游戏设计师与神经科学家组成的跨学科团队——
+          共同坚信：技术应当放大人类的创造力，而非取而代之。
+        </p>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="about-hero-grid">
+          <div class="about-visual">&#127756;</div>
+          <div class="about-content">
+            <div class="section-label">我们的故事</div>
+            <h2 class="section-title" style="font-size: 2.2rem; font-weight: 300;">诞生于艺术与智能的交汇点。</h2>
+            <p>恒星序列成立于2023年，源于一个简单的观察：AI正在重塑每一个创意领域，但高质量、零门槛的培训与定制化解决方案却极为稀缺。我们决定填补这个空白。</p>
+            <p>如今，我们横跨五大领域——AIGC培训、AI游戏开发、XR体验、数字化转型与脑机接口。每个领域都是星座中的一颗星，由对卓越与创新的共同承诺相互连接。</p>
+            <p>我们相信，创造力的未来是协作的——人与机器、艺术家与工程师、想象力与计算力之间的协作。这个未来，从这里开始。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-label">价值观</div>
+        <h2 class="section-title">我们相信什么</h2>
+        <p class="section-desc" style="margin-bottom: 60px;">三条原则指引着我们承接的每一个项目。</p>
+        <div class="values-grid">
+          <div class="value-card">
+            <div class="value-icon">&#127912;</div>
+            <h3>创意为先</h3>
+            <p>技术服务创意——而非反过来。我们构建的每一个解决方案，都从创意愿景出发。</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">&#9881;</div>
+            <h3>技术卓越</h3>
+            <p>我们不断突破边界。从神经网络到实时渲染，我们始终工作在可能性的最前沿。</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">&#127758;</div>
+            <h3>极致可及</h3>
+            <p>优秀的工具不应要求博士学位。我们为零基础创作者和企业团队而设计。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="container">
+        <div class="section-label">发展历程</div>
+        <h2 class="section-title">我们的轨迹</h2>
+        <p class="section-desc" style="margin-bottom: 48px;">从一个小团队、一个大想法，到多领域创意AI工作室。</p>
+        <div class="timeline-minimal">
+          <div class="timeline-item-mini">
+            <div class="timeline-year">2023</div>
+            <h4>创立</h4>
+            <p>恒星序列成立。核心团队组建完成。AIGC影视与游戏设计确定为核心方向。</p>
+          </div>
+          <div class="timeline-item-mini">
+            <div class="timeline-year">2024</div>
+            <h4>扩展</h4>
+            <p>首批课程学员结业。新增AI游戏与XR定制业务线。客户覆盖多行业。</p>
+          </div>
+          <div class="timeline-item-mini">
+            <div class="timeline-year">2025</div>
+            <h4>前沿</h4>
+            <p>脑机接口项目部门成立。数字化服务正式化。跨领域整合持续深化。</p>
+          </div>
+          <div class="timeline-item-mini">
+            <div class="timeline-year">2026</div>
+            <h4>生态</h4>
+            <p>构建AIGC创意生态系统。规模化连接创作者、工具与前沿技术。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-icon">&#10038;</div>
+          <span>恒星序列</span>
+        </div>
+        <p>创意AI工作室，深耕影视、游戏、XR与神经接口交叉领域。</p>
+      </div>
+      <div class="footer-col">
+        <h4>导航</h4>
+        <a href="/">首页</a>
+        <a href="about.html">关于</a>
+        <a href="products.html">服务</a>
+        <a href="contact.html">联系</a>
+      </div>
+      <div class="footer-col">
+        <h4>服务</h4>
+        <a href="products.html#course">AIGC 培训</a>
+        <a href="products.html#game">AI 游戏</a>
+        <a href="products.html#xr">XR 方案</a>
+        <a href="products.html#bci">脑机项目</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 恒星序列 Stellar Sequence. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <div class="admin-bar">
+    <a href="/admin" class="admin-btn" title="管理后台">&#9881;</a>
+  </div>
+
+  <script src="js/starfield.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/dynamic.js"></script>
+</body>
+</html>
