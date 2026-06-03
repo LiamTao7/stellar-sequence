@@ -6,63 +6,110 @@
   <title>管理后台 — 恒星序列</title>
   <style>
     :root {
-      --bg: #0a0a14;
-      --card: #111122;
-      --border: #1e1e3a;
-      --text: #e0e0f0;
-      --text2: #8888aa;
+      --bg: #080810;
+      --card: #0e0e1a;
+      --border: #1a1a2e;
+      --text: #e8e6f0;
+      --text2: #7a7890;
       --accent: #a882ff;
       --radius: 10px;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing: border-box; }
     body { font-family: 'SF Pro', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-    .container { max-width: 1000px; margin: 0 auto; padding: 32px 24px; }
+
+    .container { max-width: 960px; margin:0 auto; padding: 32px 24px; }
+
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-    header h1 { font-size: 1.5rem; font-weight: 300; letter-spacing: 1px; }
-    header a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 1px; }
+    header a { color: var(--text2); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
     header a:hover { color: var(--accent); }
+
     .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 24px; }
-    .card h2 { font-size: 1.1rem; font-weight: 400; margin-bottom: 20px; color: var(--accent); letter-spacing: 0.5px; }
+    .card h2 { font-size: 1.05rem; font-weight: 400; margin-bottom: 20px; color: var(--accent); letter-spacing: 0.5px; }
+
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
     .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 0.78rem; color: var(--text2); margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
-    .form-group input, .form-group textarea { width: 100%; padding: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.3s; }
+    .form-group label { display: block; font-size: 0.75rem; color: var(--text2); margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .form-group input, .form-group textarea {
+      width: 100%; padding: 11px 14px; background: rgba(255,255,255,0.035);
+      border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-size: 0.88rem; font-family: inherit; outline: none; transition: border-color 0.3s;
+    }
     .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); }
     .form-group textarea { min-height: 80px; resize: vertical; }
+
     .btn { padding: 10px 24px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.88rem; font-family: inherit; transition: all 0.3s; letter-spacing: 0.3px; }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { background: #b892ff; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-sm { padding: 6px 16px; font-size: 0.8rem; }
-    .btn-danger { background: #ef4444; color: #fff; }
-    .upload-area { border: 1px dashed var(--border); border-radius: var(--radius); padding: 32px; text-align: center; color: var(--text2); cursor: pointer; transition: all 0.3s; }
-    .upload-area:hover { border-color: var(--accent); background: rgba(168,130,255,0.04); }
-    .upload-area.dragover { border-color: var(--accent); background: rgba(168,130,255,0.08); }
-    .preview { margin-top: 16px; }
-    .preview img, .preview video { max-width: 100%; max-height: 200px; border-radius: 6px; border: 1px solid var(--border); }
+    .btn-sm { padding: 7px 18px; font-size: 0.82rem; }
+    .btn-success { background: #16a34a; color: #fff; }
+    .btn-success:hover { background: #15803d; }
+    .btn-danger { background: #dc2626; color: #fff; }
+
+    .sync-bar { display: flex; gap: 10px; align-items: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .token-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; }
+    .token-bar input { flex: 1; padding: 10px 14px; background: rgba(255,255,255,0.035); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.85rem; outline: none; }
+    .token-bar input:focus { border-color: var(--accent); }
+
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; vertical-align: middle; }
+    .status-dot.ok { background: #22c55e; }
+    .status-dot.wait { background: #eab308; }
+    .status-dot.none { background: #444; }
+
     .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
     .media-slot { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
     .media-slot h4 { font-size: 0.8rem; color: var(--text2); margin-bottom: 12px; letter-spacing: 0.5px; }
-    .media-slot .slot-preview { width: 100%; aspect-ratio: 16/9; background: rgba(255,255,255,0.03); border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; overflow: hidden; }
-    .media-slot .slot-preview img, .media-slot .slot-preview video { width: 100%; height: 100%; object-fit: cover; }
-    .media-slot .slot-preview.empty { color: var(--text2); font-size: 0.8rem; }
-    .toast { position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 12px 24px; border-radius: 8px; color: #fff; font-size: 0.88rem; animation: slideIn 0.3s ease; }
-    .toast.success { background: rgba(34,197,94,0.9); }
-    .toast.error { background: rgba(239,68,68,0.9); }
+    .slot-preview { width: 100%; aspect-ratio: 16/9; background: rgba(255,255,255,0.02); border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; overflow: hidden; }
+    .slot-preview img, .slot-preview video { width: 100%; height: 100%; object-fit: cover; }
+    .slot-preview.empty { color: var(--text2); font-size: 0.8rem; }
+
+    .service-card { border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin-bottom: 14px; }
+    .service-card strong { font-size: 0.85rem; color: var(--accent); font-weight: 400; letter-spacing: 0.3px; }
+    .service-card .form-group { margin-top: 10px; }
+
+    .stats-row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+    .stats-row span { color: var(--accent); font-size: 0.8rem; width: 24px; }
+    .stats-row input { flex: 1; padding: 10px 14px; background: rgba(255,255,255,0.035); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; outline: none; }
+    .stats-row input:focus { border-color: var(--accent); }
+
+    .toast { position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 12px 24px; border-radius: 8px; color: #fff; font-size: 0.88rem; animation: slideIn 0.3s ease; pointer-events: none; }
+    .toast.success { background: rgba(34,197,94,0.92); }
+    .toast.error { background: rgba(239,68,68,0.92); }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .tag-item { display: flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(168,130,255,0.1); border: 1px solid rgba(168,130,255,0.2); border-radius: 20px; font-size: 0.78rem; }
-    .tag-item button { background: none; border: none; color: var(--text2); cursor: pointer; font-size: 0.9rem; line-height: 1; }
-    .tag-item button:hover { color: #ef4444; }
+
+    .github-hint { font-size: 0.82rem; color: var(--text2); line-height: 1.8; margin-bottom: 16px; }
+    .github-hint code { background: rgba(168,130,255,0.1); padding: 2px 6px; border-radius: 3px; font-size: 0.8rem; color: var(--accent); }
+
+    @media (max-width: 640px) {
+      .form-row { grid-template-columns: 1fr; }
+      .media-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>&#10038; 恒星序列 · 管理后台</h1>
-      <a href="/">&#8592; 返回官网</a>
+      <h1>✦ 恒星序列 · 管理后台</h1>
+      <a href="/">← 返回官网</a>
     </header>
+
+    <!-- GitHub Token 配置 -->
+    <div class="card">
+      <h2>⚙ GitHub 同步配置</h2>
+      <div class="github-hint">
+        后台修改内容后，点「一键同步」将自动通过 <code>GitHub API</code> 更新仓库文件，触发 Netlify 重新部署，<strong>约 1 分钟后所有人看到最新内容</strong>。<br>
+        没有 Token？<a href="https://github.com/settings/tokens/new?scopes=repo&description=Netlify+CMS+Sync" target="_blank" style="color:var(--accent);">点此一键生成 →</a>
+        （Expiration 选 <code>No expiration</code>，勾选 <code>repo</code> 权限）
+      </div>
+      <div class="token-bar">
+        <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="flex:1;">
+        <button class="btn btn-primary btn-sm" onclick="saveToken()">保存 Token</button>
+        <button class="btn btn-outline btn-sm" onclick="testToken()">测试连接</button>
+      </div>
+      <div id="tokenStatus" style="font-size:0.8rem; color:var(--text2);"></div>
+    </div>
 
     <!-- Site Info -->
     <div class="card">
@@ -85,12 +132,15 @@
         <label>简介描述</label>
         <textarea id="siteDesc" placeholder="公司简介..."></textarea>
       </div>
-      <button class="btn btn-primary" onclick="saveSite()">保存站点信息</button>
+      <div class="sync-bar">
+        <button class="btn btn-primary" onclick="saveSite()">保存</button>
+        <button class="btn btn-success btn-sm" onclick="syncToGitHub()" id="syncBtn1"><span class="status-dot none" id="syncDot1"></span>一键同步到 GitHub</button>
+      </div>
     </div>
 
     <!-- Hero -->
     <div class="card">
-      <h2>首页 Hero</h2>
+      <h2>首页 Hero 文案</h2>
       <div class="form-row">
         <div class="form-group">
           <label>第一行</label>
@@ -111,7 +161,10 @@
           <input type="text" id="hero3" placeholder="生态体系。">
         </div>
       </div>
-      <button class="btn btn-primary" onclick="saveHero()">保存 Hero</button>
+      <div class="sync-bar">
+        <button class="btn btn-primary" onclick="saveHero()">保存</button>
+        <button class="btn btn-success btn-sm" onclick="syncToGitHub()" id="syncBtn2"><span class="status-dot none" id="syncDot2"></span>一键同步到 GitHub</button>
+      </div>
     </div>
 
     <!-- Matrix -->
@@ -131,84 +184,176 @@
         <label>描述</label>
         <textarea id="matrixDesc" placeholder="每个节点代表一项能力..."></textarea>
       </div>
-      <button class="btn btn-primary" onclick="saveMatrix()">保存矩阵文字</button>
+      <div class="sync-bar">
+        <button class="btn btn-primary" onclick="saveMatrix()">保存</button>
+        <button class="btn btn-success btn-sm" onclick="syncToGitHub()" id="syncBtn3"><span class="status-dot none" id="syncDot3"></span>一键同步到 GitHub</button>
+      </div>
     </div>
 
     <!-- Services -->
     <div class="card">
       <h2>五大服务</h2>
       <div id="servicesEditor"></div>
-      <button class="btn btn-primary" onclick="saveServices()" style="margin-top: 16px;">保存服务内容</button>
+      <div class="sync-bar">
+        <button class="btn btn-primary" onclick="saveServices()">保存</button>
+        <button class="btn btn-success btn-sm" onclick="syncToGitHub()" id="syncBtn4"><span class="status-dot none" id="syncDot4"></span>一键同步到 GitHub</button>
+      </div>
     </div>
 
     <!-- Stats -->
     <div class="card">
       <h2>数据统计</h2>
       <div id="statsEditor"></div>
-      <button class="btn btn-primary" onclick="saveStats()" style="margin-top: 16px;">保存数据统计</button>
+      <div class="sync-bar">
+        <button class="btn btn-primary" onclick="saveStats()">保存</button>
+        <button class="btn btn-success btn-sm" onclick="syncToGitHub()" id="syncBtn5"><span class="status-dot none" id="syncDot5"></span>一键同步到 GitHub</button>
+      </div>
     </div>
 
-    <!-- Media Upload -->
+    <!-- Media -->
     <div class="card">
       <h2>媒体管理</h2>
 
-      <h3 style="font-size: 0.9rem; color: var(--text2); margin-bottom: 12px;">网站图标 (Favicon)</h3>
-      <div class="media-slot" style="margin-bottom: 20px;">
-        <div class="slot-preview" id="faviconPreview"><span class="empty">未上传</span></div>
-        <input type="file" accept="image/*,.ico,.svg" onchange="uploadMedia(this, 'favicon')" style="margin-top: 8px;">
+      <h3 style="font-size:0.85rem; color:var(--text2); margin-bottom:14px; letter-spacing:0.5px;">网站图标 (Favicon)</h3>
+      <div class="media-slot" style="margin-bottom:24px; max-width:200px;">
+        <div class="slot-preview" id="faviconPreview" style="aspect-ratio:1/1; max-width:80px; margin:0 auto 10px;"><span class="empty">未上传</span></div>
+        <input type="file" accept="image/*,.ico,.svg" onchange="uploadMedia(this,'favicon')" style="font-size:0.8rem; color:var(--text2);">
       </div>
 
-      <h3 style="font-size: 0.9rem; color: var(--text2); margin-bottom: 12px;">精选视频</h3>
-      <div class="media-slot" style="margin-bottom: 20px;">
-        <div class="slot-preview" id="videoPreview"><span class="empty">未上传</span></div>
-        <input type="file" accept="video/*" onchange="uploadMedia(this, 'video')" style="margin-top: 8px;">
+      <h3 style="font-size:0.85rem; color:var(--text2); margin-bottom:14px; letter-spacing:0.5px;">精选视频（填入视频直链）</h3>
+      <div class="form-group" style="margin-bottom:24px;">
+        <label>视频地址（MP4 直链）</label>
+        <input type="text" id="videoUrl" placeholder="https://..." onchange="saveVideoUrl(this.value)">
+        <div id="videoPreviewWrap" style="margin-top:10px;"></div>
       </div>
 
-      <h3 style="font-size: 0.9rem; color: var(--text2); margin-bottom: 12px;">展示图片 (4格)</h3>
-      <div class="media-grid">
-        <div class="media-slot">
-          <h4>图片 1</h4>
-          <div class="slot-preview" id="imgPreview0"><span class="empty">未上传</span></div>
-          <input type="file" accept="image/*" onchange="uploadMedia(this, 'image-0')">
-        </div>
-        <div class="media-slot">
-          <h4>图片 2</h4>
-          <div class="slot-preview" id="imgPreview1"><span class="empty">未上传</span></div>
-          <input type="file" accept="image/*" onchange="uploadMedia(this, 'image-1')">
-        </div>
-        <div class="media-slot">
-          <h4>图片 3</h4>
-          <div class="slot-preview" id="imgPreview2"><span class="empty">未上传</span></div>
-          <input type="file" accept="image/*" onchange="uploadMedia(this, 'image-2')">
-        </div>
-        <div class="media-slot">
-          <h4>图片 4</h4>
-          <div class="slot-preview" id="imgPreview3"><span class="empty">未上传</span></div>
-          <input type="file" accept="image/*" onchange="uploadMedia(this, 'image-3')">
-        </div>
+      <h3 style="font-size:0.85rem; color:var(--text2); margin-bottom:14px; letter-spacing:0.5px;">展示图片（填入图片直链）</h3>
+      <div class="media-grid" id="imageUrlGrid">
+        <!-- 动态生成 -->
+      </div>
+
+      <div class="sync-bar">
+        <span style="font-size:0.8rem; color:var(--text2);">媒体文件填入直链后点保存，再点同步</span>
       </div>
     </div>
 
   </div>
 
   <script>
-    const API = '/api/content';
-    let contentData = {};
+    // ===== 配置 =====
+    const API = '/.netlify/functions/content';
+    const REPO = 'LiamTao7/stellar-sequence';
+    const FILE_PATH = 'server/data/content.json';
+    const BRANCH = 'main';
 
-    // Load current content
+    let contentData = {};
+    let githubToken = localStorage.getItem('gh_token') || '';
+
+    // ===== Token 管理 =====
+    if (githubToken) {
+      document.getElementById('githubToken').value = githubToken;
+      document.getElementById('tokenStatus').innerHTML = '<span style="color:#22c55e;">✓ Token 已保存</span>';
+    }
+
+    function saveToken() {
+      const t = document.getElementById('githubToken').value.trim();
+      if (!t) return showToast('请输入 Token', 'error');
+      githubToken = t;
+      localStorage.setItem('gh_token', t);
+      document.getElementById('tokenStatus').innerHTML = '<span style="color:#22c55e;">✓ Token 已保存</span>';
+      showToast('Token 已保存', 'success');
+    }
+
+    async function testToken() {
+      if (!githubToken) return showToast('请先填写 Token', 'error');
+      try {
+        const res = await fetch(`https://api.github.com/repos/${REPO}`, {
+          headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('tokenStatus').innerHTML = `<span style="color:#22c55e;">✓ 连接成功！仓库：${data.name}</span>`;
+          showToast('GitHub 连接成功', 'success');
+        } else {
+          document.getElementById('tokenStatus').innerHTML = '<span style="color:#ef4444;">✗ Token 无效或权限不足</span>';
+          showToast('Token 无效', 'error');
+        }
+      } catch (e) { showToast('网络错误', 'error'); }
+    }
+
+    // ===== 核心：一键同步到 GitHub =====
+    async function syncToGitHub() {
+      if (!githubToken) return showToast('请先填写并保存 GitHub Token', 'error');
+
+      setAllDots('wait');
+      showToast('正在同步到 GitHub...', 'success');
+
+      try {
+        // 1. 获取最新内容
+        const contentRes = await fetch(API);
+        if (!contentRes.ok) throw new Error('获取内容失败');
+        const latestContent = await contentRes.json();
+
+        // 2. 获取文件的 SHA
+        const fileRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`, {
+          headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
+        });
+        if (!fileRes.ok) throw new Error('无法读取 GitHub 文件，请检查 Token 权限和仓库路径');
+        const fileData = await fileRes.json();
+        const sha = fileData.sha;
+
+        // 3. Base64 编码内容
+        const jsonStr = JSON.stringify(latestContent, null, 2);
+        const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
+
+        // 4. 提交到 GitHub
+        const updateRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            message: `CMS sync: update content.json (${new Date().toLocaleString('zh-CN')})`,
+            content: base64Content,
+            sha: sha,
+            branch: BRANCH
+          })
+        });
+
+        if (updateRes.ok) {
+          setAllDots('ok');
+          showToast('✓ 已同步到 GitHub！Netlify 正在重新部署，约 1 分钟后生效', 'success');
+        } else {
+          const err = await updateRes.json();
+          throw new Error(err.message || '同步失败');
+        }
+      } catch (e) {
+        setAllDots('none');
+        showToast('同步失败：' + e.message, 'error');
+      }
+    }
+
+    function setAllDots(state) {
+      for (let i = 1; i <= 5; i++) {
+        const dot = document.getElementById('syncDot' + i);
+        if (dot) dot.className = 'status-dot ' + state;
+      }
+    }
+
+    // ===== 数据加载 =====
     async function loadData() {
       try {
         const res = await fetch(API);
         contentData = await res.json();
         populateForm();
-      } catch (e) {
-        toast('无法加载内容数据', 'error');
-      }
+      } catch (e) { showToast('无法加载内容数据', 'error'); }
     }
 
     function populateForm() {
       const d = contentData;
-      // Site
+      // 站点信息
       if (d.site) {
         setVal('siteName', d.site.name);
         setVal('siteNameEn', d.site.nameEn);
@@ -232,14 +377,17 @@
       renderServices(d.services || []);
       // Stats
       renderStats(d.stats || []);
-      // Media previews
+      // Media
       if (d.media) {
-        if (d.media.video) showPreview('videoPreview', d.media.video, 'video');
-        d.media.images.forEach((url, i) => {
-          if (url) showPreview('imgPreview' + i, url, 'img');
-        });
+        if (d.media.video) {
+          setVal('videoUrl', d.media.video);
+          document.getElementById('videoPreviewWrap').innerHTML = `<video src="${d.media.video}" controls style="width:100%;max-height:200px;border-radius:6px;"></video>`;
+        }
+        if (d.media.images) renderImageUrls(d.media.images);
+        if (d.favicon) {
+          document.getElementById('faviconPreview').innerHTML = `<img src="${d.favicon}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">`;
+        }
       }
-      if (d.favicon) showPreview('faviconPreview', d.favicon, 'img');
     }
 
     function setVal(id, val) {
@@ -247,135 +395,178 @@
       if (el && val !== undefined) el.value = val;
     }
 
-    function showPreview(id, url, type) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (type === 'video') {
-        el.innerHTML = `<video src="${url}" controls style="width:100%;height:100%;object-fit:cover;"></video>`;
-      } else {
-        el.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
-      }
-    }
-
-    // --- Services Editor ---
+    // ===== Services =====
     function renderServices(services) {
       const container = document.getElementById('servicesEditor');
       container.innerHTML = services.map((s, i) => `
-        <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
-          <strong style="font-size: 0.85rem; color: var(--accent);">服务 ${i + 1}</strong>
-          <div class="form-row" style="margin-top: 10px;">
-            <div class="form-group"><label>标题</label><input type="text" value="${esc(s.title)}" data-sid="${i}" data-field="title"></div>
+        <div class="service-card" data-idx="${i}">
+          <strong>服务 ${i+1}</strong>
+          <div class="form-group" style="margin-top:12px;">
+            <label>标题</label>
+            <input type="text" value="${esc(s.title||'')}" onchange="updateService(${i},'title',this.value)">
           </div>
-          <div class="form-group"><label>描述</label><textarea data-sid="${i}" data-field="desc">${esc(s.desc)}</textarea></div>
+          <div class="form-group">
+            <label>描述</label>
+            <textarea onchange="updateService(${i},'desc',this.value)">${(s.desc||'')}</textarea>
+          </div>
           <div class="form-group">
             <label>标签（逗号分隔）</label>
-            <input type="text" value="${(s.tags || []).join(', ')}" data-sid="${i}" data-field="tags">
+            <input type="text" value="${(s.tags||[]).join(', ')}" onchange="updateService(${i},'tags',this.value)">
           </div>
         </div>
       `).join('');
     }
 
-    function collectServices() {
-      const container = document.getElementById('servicesEditor');
-      const items = container.querySelectorAll('[data-sid]');
-      const services = [];
-      const map = {};
-      items.forEach(el => {
-        const idx = parseInt(el.dataset.sid);
-        if (!map[idx]) map[idx] = { id: idx + 1, title: '', desc: '', tags: [] };
-        if (el.dataset.field === 'title') map[idx].title = el.value;
-        if (el.dataset.field === 'desc') map[idx].desc = el.value;
-        if (el.dataset.field === 'tags') map[idx].tags = el.value.split(',').map(t => t.trim()).filter(Boolean);
-      });
-      return Object.values(map);
+    function updateService(idx, field, val) {
+      if (!contentData.services) contentData.services = [];
+      if (!contentData.services[idx]) contentData.services[idx] = {};
+      if (field === 'tags') {
+        contentData.services[idx][field] = val.split(',').map(t=>t.trim()).filter(Boolean);
+      } else {
+        contentData.services[idx][field] = val;
+      }
     }
 
-    // --- Stats Editor ---
+    // ===== Stats =====
     function renderStats(stats) {
       const container = document.getElementById('statsEditor');
       container.innerHTML = stats.map((s, i) => `
-        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 10px;">
-          <span style="color: var(--accent); font-size: 0.8rem; width: 24px;">${i + 1}</span>
-          <input type="text" value="${esc(s.number)}" data-stid="${i}" data-sfield="number" placeholder="数字" style="flex:1; padding: 10px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; outline: none;">
-          <input type="text" value="${esc(s.label)}" data-stid="${i}" data-sfield="label" placeholder="标签" style="flex:2; padding: 10px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; outline: none;">
+        <div class="stats-row">
+          <span>${i+1}</span>
+          <input type="text" value="${esc(s.number||'')}" placeholder="数字" onchange="updateStat(${i},'number',this.value)" style="flex:1;">
+          <input type="text" value="${esc(s.label||'')}" placeholder="标签" onchange="updateStat(${i},'label',this.value)" style="flex:2;">
         </div>
       `).join('');
     }
 
-    function collectStats() {
-      const items = document.querySelectorAll('[data-stid]');
-      const map = {};
-      items.forEach(el => {
-        const idx = parseInt(el.dataset.stid);
-        if (!map[idx]) map[idx] = { number: '', label: '' };
-        map[idx][el.dataset.sfield] = el.value;
-      });
-      return Object.values(map);
+    function updateStat(idx, field, val) {
+      if (!contentData.stats) contentData.stats = [];
+      if (!contentData.stats[idx]) contentData.stats[idx] = {};
+      contentData.stats[idx][field] = val;
     }
 
-    // --- Save Functions ---
-    async function saveSite() {
-      await update({ site: { name: val('siteName'), nameEn: val('siteNameEn'), tagline: val('siteTagline'), description: val('siteDesc') } });
-    }
-    async function saveHero() {
-      await update({ hero: { title1: val('hero1'), titleEm: val('heroEm'), title2: val('hero2'), title3: val('hero3') } });
-    }
-    async function saveMatrix() {
-      await update({ matrix: { label: val('matrixLabel'), title: val('matrixTitle'), desc: val('matrixDesc') } });
-    }
-    async function saveServices() {
-      await update({ services: collectServices() });
-    }
-    async function saveStats() {
-      await update({ stats: collectStats() });
+    // ===== Media URL =====
+    function renderImageUrls(images) {
+      const grid = document.getElementById('imageUrlGrid');
+      grid.innerHTML = [0,1,2,3].map(i => `
+        <div class="media-slot">
+          <h4>图片 ${i+1}</h4>
+          <div class="slot-preview" id="imgPrev${i}">
+            ${images[i] ? `<img src="${images[i]}">` : '<span class="empty">未设置</span>'}
+          </div>
+          <input type="text" value="${images[i]||''}" placeholder="图片直链 URL" onchange="updateImageUrl(${i}, this.value)" style="width:100%;padding:8px;font-size:0.8rem;background:rgba(255,255,255,0.035);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none;">
+        </div>
+      `).join('');
     }
 
-    async function update(patch) {
+    function updateImageUrl(idx, url) {
+      if (!contentData.media) contentData.media = {};
+      if (!contentData.media.images) contentData.media.images = [];
+      contentData.media.images[idx] = url;
+      const prev = document.getElementById('imgPrev' + idx);
+      if (prev) prev.innerHTML = url ? `<img src="${url}">` : '<span class="empty">未设置</span>';
+    }
+
+    async function saveVideoUrl(url) {
+      if (!contentData.media) contentData.media = {};
+      contentData.media.video = url;
+      await saveSiteData();
+      document.getElementById('videoPreviewWrap').innerHTML = url
+        ? `<video src="${url}" controls style="width:100%;max-height:200px;border-radius:6px;"></video>`
+        : '';
+      showToast('视频地址已保存', 'success');
+    }
+
+    // ===== 保存（临时）=====
+    async function saveSiteData() {
       try {
         const res = await fetch(API, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(patch)
+          body: JSON.stringify(contentData)
         });
-        if (res.ok) { toast('保存成功', 'success'); contentData = (await res.json()).data; }
-        else toast('保存失败', 'error');
-      } catch (e) { toast('网络错误', 'error'); }
+        if (res.ok) {
+          contentData = await res.json();
+          return true;
+        }
+        showToast('保存失败', 'error');
+        return false;
+      } catch (e) { showToast('网络错误', 'error'); return false; }
     }
 
-    // --- Upload ---
+    async function saveSite() {
+      if (!contentData.site) contentData.site = {};
+      contentData.site.name = val('siteName');
+      contentData.site.nameEn = val('siteNameEn');
+      contentData.site.tagline = val('siteTagline');
+      contentData.site.description = val('siteDesc');
+      const ok = await saveSiteData();
+      if (ok) showToast('站点信息已保存（临时），请点「同步」永久保存', 'success');
+    }
+
+    async function saveHero() {
+      if (!contentData.hero) contentData.hero = {};
+      contentData.hero.title1 = val('hero1');
+      contentData.hero.titleEm = val('heroEm');
+      contentData.hero.title2 = val('hero2');
+      contentData.hero.title3 = val('hero3');
+      const ok = await saveSiteData();
+      if (ok) showToast('Hero 已保存（临时），请点「同步」永久保存', 'success');
+    }
+
+    async function saveMatrix() {
+      if (!contentData.matrix) contentData.matrix = {};
+      contentData.matrix.label = val('matrixLabel');
+      contentData.matrix.title = val('matrixTitle');
+      contentData.matrix.desc = val('matrixDesc');
+      const ok = await saveSiteData();
+      if (ok) showToast('矩阵文字已保存（临时），请点「同步」永久保存', 'success');
+    }
+
+    async function saveServices() {
+      const ok = await saveSiteData();
+      if (ok) showToast('服务内容已保存（临时），请点「同步」永久保存', 'success');
+    }
+
+    async function saveStats() {
+      const ok = await saveSiteData();
+      if (ok) showToast('数据统计已保存（临时），请点「同步」永久保存', 'success');
+    }
+
+    // ===== 媒体上传（Base64 转 Data URL，适合小文件）=====
     async function uploadMedia(input, type) {
       const file = input.files[0];
       if (!file) return;
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', type);
+      if (file.size > 5 * 1024 * 1024) return showToast('文件需小于 5MB', 'error');
 
-      try {
-        const res = await fetch('/api/upload/media', { method: 'POST', body: formData });
-        const data = await res.json();
-        if (data.success) {
-          toast('上传成功', 'success');
-          contentData = (await fetch(API).then(r => r.json()));
-          populateForm();
-        } else {
-          toast('上传失败', 'error');
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const dataUrl = e.target.result;
+        if (!contentData.media) contentData.media = {};
+        if (type === 'favicon') {
+          contentData.favicon = dataUrl;
+          document.getElementById('faviconPreview').innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">`;
         }
-      } catch (e) { toast('上传错误', 'error'); }
+        const ok = await saveSiteData();
+        if (ok) showToast('上传成功（已保存为 Data URL，同步后永久生效）', 'success');
+      };
+      reader.readAsDataURL(file);
     }
 
     function val(id) { return document.getElementById(id)?.value || ''; }
-    function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-    function toast(msg, type) {
+    function showToast(msg, type) {
       const old = document.querySelector('.toast');
       if (old) old.remove();
       const t = document.createElement('div');
       t.className = 'toast ' + type;
       t.textContent = msg;
       document.body.appendChild(t);
-      setTimeout(() => t.remove(), 2500);
+      setTimeout(() => t.remove(), 3500);
     }
 
+    // 启动
     loadData();
   </script>
 </body>
