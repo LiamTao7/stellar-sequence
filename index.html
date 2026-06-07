@@ -15,9 +15,7 @@
     .matrix-section { padding: 0 0 80px; }
     .showcase-section { padding: 0 0 120px; }
     .showcase-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 48px; flex-wrap: wrap; gap: 24px; }
-    .admin-bar { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
-    .admin-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: var(--white); border: none; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(168,130,255,0.4); transition: all 0.3s ease; }
-    .admin-btn:hover { transform: scale(1.1); }
+    .admin-bar { display: none; }
   </style>
 </head>
 <body>
@@ -252,11 +250,6 @@
       <p>&copy; 2026 恒星序列 Stellar Sequence. All rights reserved.</p>
     </div>
   </footer>
-
-  <!-- Admin -->
-  <div class="admin-bar">
-    <a href="/admin" class="admin-btn" title="管理后台">&#9881;</a>
-  </div>
 
   <script src="js/starfield.js"></script>
   <script src="js/matrix.js"></script>
