@@ -8,6 +8,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +17,17 @@ const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname, 'data');
 const UPLOAD_DIR = path.join(__dirname, 'uploads');
 const CONTENT_FILE = path.join(DATA_DIR, 'content.json');
+
+// Admin password (SHA-256 of the real password)
+const ADMIN_PASS_HASH = '5b2e4d10b05dddea3e21049b6d58d55fb2879bdbd67b2b7459ee29c726a7b523';
+
+function checkAdminAuth(req, res, next) {
+  const token = req.headers['x-admin-token'] || req.headers['authorization'];
+  if (!token) return res.status(401).json({ error: '未授权，请提供管理员令牌' });
+  const hash = crypto.createHash('sha256').update(token.replace('Bearer ', '')).digest('hex');
+  if (hash !== ADMIN_PASS_HASH) return res.status(403).json({ error: '密码错误' });
+  next();
+}
 
 // Ensure directories
 [DATA_DIR, UPLOAD_DIR].forEach(d => { if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true }); });
@@ -73,23 +85,23 @@ app.get('/api/content', (req, res) => {
   res.json(readContent());
 });
 
-// PUT /api/content — update any content field
-app.put('/api/content', (req, res) => {
+// PUT /api/content — update any content field (requires auth)
+app.put('/api/content', checkAdminAuth, (req, res) => {
   const current = readContent();
   const merged = deepMerge(current, req.body);
   writeContent(merged);
   res.json({ success: true, data: merged });
 });
 
-// POST /api/upload — upload file (image/video/favicon)
-app.post('/api/upload', upload.single('file'), (req, res) => {
+// POST /api/upload — upload file (requires auth)
+app.post('/api/upload', checkAdminAuth, upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   const url = '/uploads/' + req.file.filename;
   res.json({ success: true, url, filename: req.file.filename });
 });
 
-// POST /api/upload/type — upload & update specific media slot
-app.post('/api/upload/media', upload.single('file'), (req, res) => {
+// POST /api/upload/type — upload & update specific media slot (requires auth)
+app.post('/api/upload/media', checkAdminAuth, upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   const type = req.body.type; // 'video' | 'image-0' | 'image-1' | 'image-2' | 'image-3' | 'favicon' | 'logo'
   const url = '/uploads/' + req.file.filename;
@@ -114,8 +126,8 @@ app.post('/api/upload/media', upload.single('file'), (req, res) => {
   res.json({ success: true, url, type });
 });
 
-// DELETE /api/upload/:filename — remove uploaded file
-app.delete('/api/upload/:filename', (req, res) => {
+// DELETE /api/upload/:filename — remove uploaded file (requires auth)
+app.delete('/api/upload/:filename', checkAdminAuth, (req, res) => {
   const filepath = path.join(UPLOAD_DIR, req.params.filename);
   if (fs.existsSync(filepath)) {
     fs.unlinkSync(filepath);

@@ -55,8 +55,32 @@
 
     .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; vertical-align: middle; }
     .status-dot.ok { background: #22c55e; }
-    .status-dot.wait { background: #eab308; }
+    .status-dot.wait { background: #eab308; animation: pulse 1s infinite; }
     .status-dot.none { background: #444; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .global-sync-bar { background: rgba(168,130,255,0.07); border: 1px solid rgba(168,130,255,0.2); border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .global-sync-bar .sync-info { font-size: 0.82rem; color: var(--text2); line-height: 1.6; }
+    .global-sync-bar .sync-info strong { color: var(--accent); }
+    .btn-sync-all { background: linear-gradient(135deg, #a882ff, #7c5cbf); color: #fff; border: none; padding: 12px 28px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-family: inherit; font-weight: 500; letter-spacing: 0.3px; transition: all 0.3s; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .btn-sync-all:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(168,130,255,0.4); }
+    .btn-sync-all:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .sync-progress { font-size: 0.8rem; color: var(--text2); min-width: 180px; }
+    .sync-step { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .sync-step .step-dot { width: 6px; height: 6px; border-radius: 50%; background: #444; flex-shrink: 0; }
+    .sync-step .step-dot.active { background: #eab308; animation: pulse 1s infinite; }
+    .sync-step .step-dot.done { background: #22c55e; }
+    .sync-step .step-dot.error { background: #ef4444; }
+
+    .img-upload-item { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+    .img-upload-item h4 { font-size: 0.78rem; color: var(--text2); margin-bottom: 10px; letter-spacing: 0.5px; }
+    .img-upload-item .preview-wrap { width: 100%; aspect-ratio: 16/9; background: rgba(255,255,255,0.02); border-radius: 4px; overflow: hidden; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--text2); }
+    .img-upload-item .preview-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .img-upload-item .img-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .img-upload-item .img-actions input[type=text] { flex:1; min-width:0; padding: 7px 10px; background: rgba(255,255,255,0.035); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 0.78rem; outline: none; }
+    .img-upload-item .img-actions input:focus { border-color: var(--accent); }
+    .img-upload-file-btn { position: relative; overflow: hidden; }
+    .img-upload-file-btn input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width:100%; height:100%; }
 
     .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
     .media-slot { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
@@ -86,21 +110,120 @@
       .form-row { grid-template-columns: 1fr; }
       .media-grid { grid-template-columns: 1fr; }
     }
+    /* --- Password Gate --- */
+    #pw-gate {
+      position: fixed; inset: 0; background: #080810;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 99999; flex-direction: column; gap: 20px;
+    }
+    #pw-gate h2 { font-size: 1.1rem; font-weight: 300; letter-spacing: 2px; color: #a882ff; }
+    #pw-gate .pw-box {
+      background: #0e0e1a; border: 1px solid #1a1a2e; border-radius: 12px;
+      padding: 32px 40px; display: flex; flex-direction: column; gap: 14px; min-width: 300px;
+    }
+    #pw-gate input {
+      padding: 12px 16px; background: rgba(255,255,255,0.04); border: 1px solid #1a1a2e;
+      border-radius: 7px; color: #e8e6f0; font-size: 1rem; outline: none; letter-spacing: 3px;
+      font-family: monospace; text-align: center;
+    }
+    #pw-gate input:focus { border-color: #a882ff; }
+    #pw-gate button {
+      padding: 11px; background: #a882ff; color: #fff; border: none;
+      border-radius: 7px; cursor: pointer; font-size: 0.9rem; letter-spacing: 0.5px; transition: background 0.2s;
+    }
+    #pw-gate button:hover { background: #b892ff; }
+    #pw-gate .pw-err { color: #ef4444; font-size: 0.82rem; text-align: center; min-height: 18px; }
   </style>
 </head>
 <body>
+  <!-- Password Gate -->
+  <div id="pw-gate">
+    <h2>✦ 恒星序列 · 管理后台</h2>
+    <div class="pw-box">
+      <input type="password" id="pw-input" placeholder="请输入管理密码" autofocus />
+      <button onclick="checkPw()">进入</button>
+      <div class="pw-err" id="pw-err"></div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      const KEY = 'ss_admin_auth';
+      const HASH = '5b2e4d10b05dddea3e21049b6d58d55fb2879bdbd67b2b7459ee29c726a7b523'; // sha256 of 20171123
+      async function sha256(msg) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+      }
+      if (sessionStorage.getItem(KEY) === HASH) {
+        document.getElementById('pw-gate').style.display = 'none';
+        window._adminAuth = true;
+      }
+      window.checkPw = async function() {
+        const val = document.getElementById('pw-input').value;
+        const h = await sha256(val);
+        if (h === HASH) {
+          sessionStorage.setItem(KEY, h);
+          window._adminAuth = true;
+          document.getElementById('pw-gate').style.display = 'none';
+        } else {
+          document.getElementById('pw-err').textContent = '密码错误，请重试';
+          document.getElementById('pw-input').value = '';
+          document.getElementById('pw-input').focus();
+        }
+      };
+      document.addEventListener('DOMContentLoaded', () => {
+        const inp = document.getElementById('pw-input');
+        if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkPw(); });
+      });
+    })();
+  </script>
+
   <div class="container">
     <header>
       <h1>✦ 恒星序列 · 管理后台</h1>
       <a href="/">← 返回官网</a>
     </header>
 
+    <!-- 系统状态面板 -->
+    <div class="card">
+      <h2>📡 系统状态</h2>
+      <div class="status-panel" style="display:flex; gap:24px; flex-wrap:wrap; font-size:0.85rem;">
+        <div class="status-item">
+          <span class="status-label">API 连接</span>
+          <span id="apiStatus" class="status-badge">检查中...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">GitHub</span>
+          <span id="githubStatus" class="status-badge">未配置</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">内容版本</span>
+          <span id="contentVersion" class="status-badge">—</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">前端预览</span>
+          <a href="/" target="_blank" class="status-link">打开官网 →</a>
+        </div>
+      </div>
+      <div id="connectionDetail" style="margin-top:12px; font-size:0.78rem; color:var(--text2);"></div>
+    </div>
+
+    <style>
+      .status-item { display:flex; flex-direction:column; gap:4px; }
+      .status-label { font-size:0.72rem; color:var(--text2); letter-spacing:0.5px; }
+      .status-badge { padding:4px 12px; border-radius:4px; font-size:0.8rem; background:rgba(255,255,255,0.04); border:1px solid var(--border); }
+      .status-badge.ok { background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.3); color:#22c55e; }
+      .status-badge.err { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.3); color:#ef4444; }
+      .status-badge.warn { background:rgba(234,179,8,0.12); border-color:rgba(234,179,8,0.3); color:#eab308; }
+      .status-link { color:var(--accent); text-decoration:none; font-size:0.8rem; padding:4px 12px; border-radius:4px; border:1px solid rgba(168,130,255,0.3); transition:all 0.3s; }
+      .status-link:hover { background:rgba(168,130,255,0.1); }
+    </style>
+
     <!-- GitHub Token 配置 -->
     <div class="card">
       <h2>⚙ GitHub 同步配置</h2>
       <div class="github-hint">
-        后台修改内容后，点「一键同步」将自动通过 <code>GitHub API</code> 更新仓库文件，触发 Netlify 重新部署，<strong>约 1 分钟后所有人看到最新内容</strong>。<br>
-        没有 Token？<a href="https://github.com/settings/tokens/new?scopes=repo&description=Netlify+CMS+Sync" target="_blank" style="color:var(--accent);">点此一键生成 →</a>
+        配置 Token 后，所有修改（内容 + 图片/视频）可一键同步到 GitHub 仓库，Netlify 自动重新部署，<strong>约 1 分钟后所有人看到最新内容</strong>。<br>
+        没有 Token？<a href="https://github.com/settings/tokens/new?scopes=repo&description=Stellar+CMS+Sync" target="_blank" style="color:var(--accent);">点此一键生成 →</a>
         （Expiration 选 <code>No expiration</code>，勾选 <code>repo</code> 权限）
       </div>
       <div class="token-bar">
@@ -109,6 +232,22 @@
         <button class="btn btn-outline btn-sm" onclick="testToken()">测试连接</button>
       </div>
       <div id="tokenStatus" style="font-size:0.8rem; color:var(--text2);"></div>
+    </div>
+
+    <!-- 全局一键同步 -->
+    <div class="global-sync-bar">
+      <div class="sync-info">
+        <strong>⚡ 一键全量同步到 GitHub</strong><br>
+        将所有已保存的内容（文字 + 图片）一次性推送到仓库，触发 Netlify 重新部署
+      </div>
+      <div id="syncProgressArea" class="sync-progress" style="display:none;">
+        <div class="sync-step"><span class="step-dot" id="step1dot"></span><span id="step1txt">获取内容</span></div>
+        <div class="sync-step"><span class="step-dot" id="step2dot"></span><span id="step2txt">上传图片</span></div>
+        <div class="sync-step"><span class="step-dot" id="step3dot"></span><span id="step3txt">同步数据</span></div>
+      </div>
+      <button class="btn-sync-all" onclick="syncAllToGitHub()" id="syncAllBtn">
+        <span>🚀</span> 一键同步到 GitHub
+      </button>
     </div>
 
     <!-- Site Info -->
@@ -134,7 +273,7 @@
       </div>
       <div class="sync-bar">
         <button class="btn btn-primary" onclick="saveSite()">保存</button>
-        <button class="btn btn-success btn-sm" onclick="syncToGitHub()" id="syncBtn1"><span class="status-dot none" id="syncDot1"></span>一键同步到 GitHub</button>
+        <span style="font-size:0.78rem; color:var(--text2);">保存后点上方「一键同步」推送至 GitHub</span>
       </div>
     </div>
 
@@ -163,7 +302,6 @@
       </div>
       <div class="sync-bar">
         <button class="btn btn-primary" onclick="saveHero()">保存</button>
-        <button class="btn btn-success btn-sm" onclick="syncToGitHub()" id="syncBtn2"><span class="status-dot none" id="syncDot2"></span>一键同步到 GitHub</button>
       </div>
     </div>
 
@@ -186,7 +324,6 @@
       </div>
       <div class="sync-bar">
         <button class="btn btn-primary" onclick="saveMatrix()">保存</button>
-        <button class="btn btn-success btn-sm" onclick="syncToGitHub()" id="syncBtn3"><span class="status-dot none" id="syncDot3"></span>一键同步到 GitHub</button>
       </div>
     </div>
 
@@ -196,7 +333,6 @@
       <div id="servicesEditor"></div>
       <div class="sync-bar">
         <button class="btn btn-primary" onclick="saveServices()">保存</button>
-        <button class="btn btn-success btn-sm" onclick="syncToGitHub()" id="syncBtn4"><span class="status-dot none" id="syncDot4"></span>一键同步到 GitHub</button>
       </div>
     </div>
 
@@ -206,7 +342,6 @@
       <div id="statsEditor"></div>
       <div class="sync-bar">
         <button class="btn btn-primary" onclick="saveStats()">保存</button>
-        <button class="btn btn-success btn-sm" onclick="syncToGitHub()" id="syncBtn5"><span class="status-dot none" id="syncDot5"></span>一键同步到 GitHub</button>
       </div>
     </div>
 
@@ -217,23 +352,30 @@
       <h3 style="font-size:0.85rem; color:var(--text2); margin-bottom:14px; letter-spacing:0.5px;">网站图标 (Favicon)</h3>
       <div class="media-slot" style="margin-bottom:24px; max-width:200px;">
         <div class="slot-preview" id="faviconPreview" style="aspect-ratio:1/1; max-width:80px; margin:0 auto 10px;"><span class="empty">未上传</span></div>
-        <input type="file" accept="image/*,.ico,.svg" onchange="uploadMedia(this,'favicon')" style="font-size:0.8rem; color:var(--text2);">
+        <input type="file" accept="image/*,.ico,.svg" onchange="uploadFavicon(this)" style="font-size:0.8rem; color:var(--text2);">
+        <div id="faviconStatus" style="font-size:0.75rem; color:var(--text2); margin-top:6px;"></div>
       </div>
 
-      <h3 style="font-size:0.85rem; color:var(--text2); margin-bottom:14px; letter-spacing:0.5px;">精选视频（填入视频直链）</h3>
-      <div class="form-group" style="margin-bottom:24px;">
-        <label>视频地址（MP4 直链）</label>
-        <input type="text" id="videoUrl" placeholder="https://..." onchange="saveVideoUrl(this.value)">
-        <div id="videoPreviewWrap" style="margin-top:10px;"></div>
+      <h3 style="font-size:0.85rem; color:var(--text2); margin-bottom:14px; letter-spacing:0.5px;">精选视频</h3>
+      <div class="form-group" style="margin-bottom:8px;">
+        <label>视频地址（MP4 直链，或上传后自动填入）</label>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input type="text" id="videoUrl" placeholder="https://..." onchange="saveVideoUrl(this.value)" style="flex:1; min-width:0;">
+          <div class="img-upload-file-btn btn btn-outline btn-sm" title="上传视频到 GitHub（建议 ≤50MB）" style="white-space:nowrap; flex-shrink:0;">
+            <span>🎬 上传视频</span>
+            <input type="file" accept="video/mp4,video/webm,video/mov,video/*" onchange="uploadVideoToGitHub(this)">
+          </div>
+        </div>
+        <div id="videoUploadStatus" style="font-size:0.75rem; color:var(--text2); margin-top:6px;"></div>
       </div>
+      <div id="videoPreviewWrap" style="margin-bottom:24px;"></div>
 
-      <h3 style="font-size:0.85rem; color:var(--text2); margin-bottom:14px; letter-spacing:0.5px;">展示图片（填入图片直链）</h3>
-      <div class="media-grid" id="imageUrlGrid">
-        <!-- 动态生成 -->
-      </div>
+      <h3 style="font-size:0.85rem; color:var(--text2); margin-bottom:8px; letter-spacing:0.5px;">展示图片</h3>
+      <p style="font-size:0.78rem; color:var(--text2); margin-bottom:14px;">可直接上传图片（自动存入 GitHub 仓库 <code style="background:rgba(168,130,255,0.1);padding:1px 5px;border-radius:3px;color:var(--accent)">images/</code> 目录），或填入外链 URL。</p>
+      <div class="media-grid" id="imageUrlGrid"></div>
 
-      <div class="sync-bar">
-        <span style="font-size:0.8rem; color:var(--text2);">媒体文件填入直链后点保存，再点同步</span>
+      <div class="sync-bar" style="margin-top:16px;">
+        <span style="font-size:0.78rem; color:var(--text2);">图片上传后自动保存。点上方「一键同步」将所有变更推送到 GitHub。</span>
       </div>
     </div>
 
@@ -243,11 +385,21 @@
     // ===== 配置 =====
     const API = '/.netlify/functions/content';
     const REPO = 'LiamTao7/stellar-sequence';
-    const FILE_PATH = 'server/data/content.json';
     const BRANCH = 'main';
+    const CONTENT_FILE = 'server/data/content.json';
+    const ADMIN_PASS_KEY = 'ss_admin_auth';
+
+    // Helper: get auth headers for write operations
+    function adminHeaders(extra) {
+      const token = sessionStorage.getItem(ADMIN_PASS_KEY) || '';
+      return Object.assign({ 'Content-Type': 'application/json', 'X-Admin-Token': token }, extra || {});
+    }
+    const IMAGES_DIR = 'images/cms/';
 
     let contentData = {};
     let githubToken = localStorage.getItem('gh_token') || '';
+    // 待上传到 GitHub 的图片队列: { path, base64, mimeType }[]
+    let pendingImageUploads = [];
 
     // ===== Token 管理 =====
     if (githubToken) {
@@ -281,64 +433,148 @@
       } catch (e) { showToast('网络错误', 'error'); }
     }
 
-    // ===== 核心：一键同步到 GitHub =====
-    async function syncToGitHub() {
+    // ===== 核心：全量一键同步到 GitHub =====
+    async function syncAllToGitHub() {
       if (!githubToken) return showToast('请先填写并保存 GitHub Token', 'error');
 
-      setAllDots('wait');
-      showToast('正在同步到 GitHub...', 'success');
+      const btn = document.getElementById('syncAllBtn');
+      const progressArea = document.getElementById('syncProgressArea');
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span> 同步中...';
+      progressArea.style.display = 'block';
+
+      function setStep(n, state, text) {
+        const dot = document.getElementById('step' + n + 'dot');
+        const txt = document.getElementById('step' + n + 'txt');
+        if (dot) dot.className = 'step-dot ' + state;
+        if (txt && text) txt.textContent = text;
+      }
 
       try {
-        // 1. 获取最新内容
+        // Step 1: 获取最新内容
+        setStep(1, 'active', '获取内容...');
         const contentRes = await fetch(API);
         if (!contentRes.ok) throw new Error('获取内容失败');
         const latestContent = await contentRes.json();
+        setStep(1, 'done', '内容已获取');
 
-        // 2. 获取文件的 SHA
-        const fileRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`, {
-          headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
-        });
-        if (!fileRes.ok) throw new Error('无法读取 GitHub 文件，请检查 Token 权限和仓库路径');
-        const fileData = await fileRes.json();
-        const sha = fileData.sha;
+        // Step 2: 上传待上传的图片到 GitHub
+        setStep(2, 'active', `上传图片 (${pendingImageUploads.length} 张)...`);
+        for (const img of pendingImageUploads) {
+          await githubPutFile(img.path, img.base64, `Upload image: ${img.path}`);
+        }
+        pendingImageUploads = [];
+        setStep(2, 'done', '图片已上传');
 
-        // 3. Base64 编码内容
+        // Step 3: 同步 content.json
+        setStep(3, 'active', '同步数据文件...');
         const jsonStr = JSON.stringify(latestContent, null, 2);
         const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
+        await githubPutFile(CONTENT_FILE, base64Content, `CMS sync: update content.json (${new Date().toLocaleString('zh-CN')})`);
+        setStep(3, 'done', '数据已同步');
 
-        // 4. 提交到 GitHub
-        const updateRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${githubToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json'
-          },
-          body: JSON.stringify({
-            message: `CMS sync: update content.json (${new Date().toLocaleString('zh-CN')})`,
-            content: base64Content,
-            sha: sha,
-            branch: BRANCH
-          })
-        });
+        btn.innerHTML = '<span>✓</span> 同步完成！';
+        btn.style.background = '#16a34a';
+        showToast('✓ 全量同步完成！Netlify 正在重新部署，约 1 分钟后生效', 'success');
 
-        if (updateRes.ok) {
-          setAllDots('ok');
-          showToast('✓ 已同步到 GitHub！Netlify 正在重新部署，约 1 分钟后生效', 'success');
-        } else {
-          const err = await updateRes.json();
-          throw new Error(err.message || '同步失败');
-        }
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.innerHTML = '<span>🚀</span> 一键同步到 GitHub';
+          btn.style.background = '';
+          progressArea.style.display = 'none';
+        }, 4000);
+
       } catch (e) {
-        setAllDots('none');
+        setStep(1, 'error'); setStep(2, 'error'); setStep(3, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span>🚀</span> 一键同步到 GitHub';
         showToast('同步失败：' + e.message, 'error');
       }
     }
 
-    function setAllDots(state) {
-      for (let i = 1; i <= 5; i++) {
-        const dot = document.getElementById('syncDot' + i);
-        if (dot) dot.className = 'status-dot ' + state;
+    // 通用 GitHub 文件写入（自动获取 SHA 处理已有文件）
+    async function githubPutFile(filePath, base64Content, message) {
+      const headers = {
+        'Authorization': `token ${githubToken}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      };
+      // 尝试获取已有文件的 SHA
+      let sha = undefined;
+      const getRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${filePath}?ref=${BRANCH}`, { headers });
+      if (getRes.ok) {
+        const fileData = await getRes.json();
+        sha = fileData.sha;
+      }
+      const body = { message, content: base64Content, branch: BRANCH };
+      if (sha) body.sha = sha;
+      const putRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${filePath}`, {
+        method: 'PUT', headers, body: JSON.stringify(body)
+      });
+      if (!putRes.ok) {
+        const err = await putRes.json();
+        throw new Error(err.message || `写入 ${filePath} 失败`);
+      }
+      return putRes.json();
+    }
+
+    // ===== 系统状态检测 =====
+    async function checkSystemStatus() {
+      const apiBadge = document.getElementById('apiStatus');
+      const ghBadge = document.getElementById('githubStatus');
+      const verBadge = document.getElementById('contentVersion');
+      const detail = document.getElementById('connectionDetail');
+
+      // Check API
+      try {
+        const res = await fetch(API, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          apiBadge.textContent = '✓ 正常';
+          apiBadge.className = 'status-badge ok';
+
+          if (data._deploy && data._deploy.updated) {
+            const d = new Date(data._deploy.updated);
+            verBadge.textContent = d.toLocaleString('zh-CN');
+          } else {
+            verBadge.textContent = '未知';
+          }
+
+          const hasData = !!(data.site || data.hero || data.services);
+          if (!hasData) {
+            detail.innerHTML = '<span style="color:#eab308;">⚠ API 已连接，但返回的数据为空。请检查 server/data/content.json 是否已部署到 Netlify。</span>';
+          } else {
+            detail.textContent = `内容数据完整（site/hero/services/stats 共 ${Object.keys(data).length} 个模块）`;
+          }
+        } else {
+          apiBadge.textContent = '✗ 异常 ' + res.status;
+          apiBadge.className = 'status-badge err';
+          detail.textContent = 'API 返回错误状态码，请检查 Netlify Functions 日志。';
+        }
+      } catch (e) {
+        apiBadge.textContent = '✗ 断开';
+        apiBadge.className = 'status-badge err';
+        detail.textContent = '无法连接到 API（' + e.message + '）。如果是本地预览，这是正常的。';
+      }
+
+      // Check GitHub
+      if (githubToken) {
+        try {
+          const res = await fetch(`https://api.github.com/repos/${REPO}`, {
+            headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            ghBadge.textContent = '✓ ' + data.name;
+            ghBadge.className = 'status-badge ok';
+          } else {
+            ghBadge.textContent = '✗ Token 无效';
+            ghBadge.className = 'status-badge err';
+          }
+        } catch (e) {
+          ghBadge.textContent = '✗ 网络错误';
+          ghBadge.className = 'status-badge err';
+        }
       }
     }
 
@@ -348,45 +584,48 @@
         const res = await fetch(API);
         contentData = await res.json();
         populateForm();
-      } catch (e) { showToast('无法加载内容数据', 'error'); }
+        // 数据加载成功后再更新系统状态
+        checkSystemStatus();
+      } catch (e) {
+        showToast('无法加载内容数据', 'error');
+        document.getElementById('apiStatus').textContent = '✗ 断开';
+        document.getElementById('apiStatus').className = 'status-badge err';
+        document.getElementById('connectionDetail').textContent = '本地预览模式下 API 不可用，属正常现象。';
+      }
     }
 
     function populateForm() {
       const d = contentData;
-      // 站点信息
       if (d.site) {
         setVal('siteName', d.site.name);
         setVal('siteNameEn', d.site.nameEn);
         setVal('siteTagline', d.site.tagline);
         setVal('siteDesc', d.site.description);
       }
-      // Hero
       if (d.hero) {
         setVal('hero1', d.hero.title1);
         setVal('heroEm', d.hero.titleEm);
         setVal('hero2', d.hero.title2);
         setVal('hero3', d.hero.title3);
       }
-      // Matrix
       if (d.matrix) {
         setVal('matrixLabel', d.matrix.label);
         setVal('matrixTitle', d.matrix.title);
         setVal('matrixDesc', d.matrix.desc);
       }
-      // Services
       renderServices(d.services || []);
-      // Stats
       renderStats(d.stats || []);
-      // Media
       if (d.media) {
         if (d.media.video) {
           setVal('videoUrl', d.media.video);
           document.getElementById('videoPreviewWrap').innerHTML = `<video src="${d.media.video}" controls style="width:100%;max-height:200px;border-radius:6px;"></video>`;
         }
-        if (d.media.images) renderImageUrls(d.media.images);
+        renderImageGrid(d.media.images || []);
         if (d.favicon) {
           document.getElementById('faviconPreview').innerHTML = `<img src="${d.favicon}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">`;
         }
+      } else {
+        renderImageGrid([]);
       }
     }
 
@@ -445,16 +684,23 @@
       contentData.stats[idx][field] = val;
     }
 
-    // ===== Media URL =====
-    function renderImageUrls(images) {
+    // ===== 媒体：图片上传到 GitHub =====
+    function renderImageGrid(images) {
       const grid = document.getElementById('imageUrlGrid');
       grid.innerHTML = [0,1,2,3].map(i => `
-        <div class="media-slot">
+        <div class="img-upload-item">
           <h4>图片 ${i+1}</h4>
-          <div class="slot-preview" id="imgPrev${i}">
-            ${images[i] ? `<img src="${images[i]}">` : '<span class="empty">未设置</span>'}
+          <div class="preview-wrap" id="imgPrev${i}">
+            ${images[i] ? `<img src="${esc(images[i])}">` : '<span>未设置</span>'}
           </div>
-          <input type="text" value="${images[i]||''}" placeholder="图片直链 URL" onchange="updateImageUrl(${i}, this.value)" style="width:100%;padding:8px;font-size:0.8rem;background:rgba(255,255,255,0.035);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none;">
+          <div class="img-actions">
+            <input type="text" id="imgUrl${i}" value="${esc(images[i]||'')}" placeholder="图片 URL 或上传后自动填入" onchange="updateImageUrl(${i}, this.value)">
+            <div class="img-upload-file-btn btn btn-outline btn-sm" title="上传图片到 GitHub">
+              <span>📁 上传</span>
+              <input type="file" accept="image/*" onchange="uploadImageToGitHub(this, ${i})">
+            </div>
+          </div>
+          <div id="imgUploadStatus${i}" style="font-size:0.72rem; color:var(--text2); margin-top:4px;"></div>
         </div>
       `).join('');
     }
@@ -464,7 +710,79 @@
       if (!contentData.media.images) contentData.media.images = [];
       contentData.media.images[idx] = url;
       const prev = document.getElementById('imgPrev' + idx);
-      if (prev) prev.innerHTML = url ? `<img src="${url}">` : '<span class="empty">未设置</span>';
+      if (prev) prev.innerHTML = url ? `<img src="${url}">` : '<span>未设置</span>';
+    }
+
+    // 上传图片：先读取为 base64，加入待上传队列，同时用 Data URL 预览
+    async function uploadImageToGitHub(input, idx) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 10 * 1024 * 1024) return showToast('图片需小于 10MB', 'error');
+
+      const status = document.getElementById('imgUploadStatus' + idx);
+      status.textContent = '读取中...';
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        // base64 data 部分（去掉 data:image/png;base64, 前缀）
+        const base64 = dataUrl.split(',')[1];
+        const ext = file.name.split('.').pop().toLowerCase();
+        const filename = `img-${idx + 1}-${Date.now()}.${ext}`;
+        const ghPath = IMAGES_DIR + filename;
+
+        // 加入待上传队列
+        pendingImageUploads = pendingImageUploads.filter(p => !p.path.includes(`img-${idx + 1}-`));
+        pendingImageUploads.push({ path: ghPath, base64, mimeType: file.type });
+
+        // 用 rawgithubusercontent 构造未来路径（上传后可访问）
+        const futureUrl = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${ghPath}`;
+        updateImageUrl(idx, futureUrl);
+        const urlInput = document.getElementById('imgUrl' + idx);
+        if (urlInput) urlInput.value = futureUrl;
+        status.innerHTML = `<span style="color:#eab308;">⏳ 待同步：${filename}（点「一键同步」上传到 GitHub）</span>`;
+        showToast(`图片已准备，点「一键同步」上传`, 'success');
+      };
+      reader.onerror = () => { status.textContent = '读取失败'; };
+      reader.readAsDataURL(file);
+    }
+
+    // 视频上传到 GitHub（与图片同逻辑，体积较大时会慢）
+    async function uploadVideoToGitHub(input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 100 * 1024 * 1024) return showToast('视频需小于 100MB', 'error');
+
+      const status = document.getElementById('videoUploadStatus');
+      status.innerHTML = '<span style="color:#eab308;">⏳ 读取中，请稍候（大文件可能需要几秒）...</span>';
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        const base64 = dataUrl.split(',')[1];
+        const ext = file.name.split('.').pop().toLowerCase();
+        const filename = `video-hero-${Date.now()}.${ext}`;
+        const ghPath = 'videos/' + filename;
+
+        // 加入待上传队列（复用图片上传流程）
+        pendingImageUploads = pendingImageUploads.filter(p => !p.path.startsWith('videos/video-hero-'));
+        pendingImageUploads.push({ path: ghPath, base64, mimeType: file.type });
+
+        const futureUrl = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${ghPath}`;
+        // 更新 URL 输入框和保存
+        const urlInput = document.getElementById('videoUrl');
+        if (urlInput) urlInput.value = futureUrl;
+        if (!contentData.media) contentData.media = {};
+        contentData.media.video = futureUrl;
+        saveSiteData();
+
+        document.getElementById('videoPreviewWrap').innerHTML =
+          `<video src="${futureUrl}" controls style="width:100%;max-height:220px;border-radius:6px;background:#000;"></video>`;
+        status.innerHTML = `<span style="color:#eab308;">⏳ 待同步：${filename}（点「一键同步」上传到 GitHub）</span>`;
+        showToast('视频已准备，点「一键同步」上传', 'success');
+      };
+      reader.onerror = () => { status.textContent = '读取失败，请重试'; };
+      reader.readAsDataURL(file);
     }
 
     async function saveVideoUrl(url) {
@@ -477,12 +795,32 @@
       showToast('视频地址已保存', 'success');
     }
 
-    // ===== 保存（临时）=====
+    // Favicon 上传
+    async function uploadFavicon(input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) return showToast('文件需小于 5MB', 'error');
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const dataUrl = e.target.result;
+        if (!contentData.media) contentData.media = {};
+        contentData.favicon = dataUrl;
+        document.getElementById('faviconPreview').innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">`;
+        const ok = await saveSiteData();
+        if (ok) {
+          document.getElementById('faviconStatus').innerHTML = '<span style="color:#22c55e;">✓ 已保存（Data URL）</span>';
+          showToast('Favicon 已保存，点「一键同步」生效', 'success');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ===== 保存（临时到 Netlify Functions）=====
     async function saveSiteData() {
       try {
         const res = await fetch(API, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: adminHeaders(),
           body: JSON.stringify(contentData)
         });
         if (res.ok) {
@@ -501,7 +839,7 @@
       contentData.site.tagline = val('siteTagline');
       contentData.site.description = val('siteDesc');
       const ok = await saveSiteData();
-      if (ok) showToast('站点信息已保存（临时），请点「同步」永久保存', 'success');
+      if (ok) showToast('站点信息已保存（临时），请点「一键同步」永久保存', 'success');
     }
 
     async function saveHero() {
@@ -511,7 +849,7 @@
       contentData.hero.title2 = val('hero2');
       contentData.hero.title3 = val('hero3');
       const ok = await saveSiteData();
-      if (ok) showToast('Hero 已保存（临时），请点「同步」永久保存', 'success');
+      if (ok) showToast('Hero 已保存（临时），请点「一键同步」永久保存', 'success');
     }
 
     async function saveMatrix() {
@@ -520,37 +858,17 @@
       contentData.matrix.title = val('matrixTitle');
       contentData.matrix.desc = val('matrixDesc');
       const ok = await saveSiteData();
-      if (ok) showToast('矩阵文字已保存（临时），请点「同步」永久保存', 'success');
+      if (ok) showToast('矩阵文字已保存（临时），请点「一键同步」永久保存', 'success');
     }
 
     async function saveServices() {
       const ok = await saveSiteData();
-      if (ok) showToast('服务内容已保存（临时），请点「同步」永久保存', 'success');
+      if (ok) showToast('服务内容已保存（临时），请点「一键同步」永久保存', 'success');
     }
 
     async function saveStats() {
       const ok = await saveSiteData();
-      if (ok) showToast('数据统计已保存（临时），请点「同步」永久保存', 'success');
-    }
-
-    // ===== 媒体上传（Base64 转 Data URL，适合小文件）=====
-    async function uploadMedia(input, type) {
-      const file = input.files[0];
-      if (!file) return;
-      if (file.size > 5 * 1024 * 1024) return showToast('文件需小于 5MB', 'error');
-
-      const reader = new FileReader();
-      reader.onload = async function(e) {
-        const dataUrl = e.target.result;
-        if (!contentData.media) contentData.media = {};
-        if (type === 'favicon') {
-          contentData.favicon = dataUrl;
-          document.getElementById('faviconPreview').innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">`;
-        }
-        const ok = await saveSiteData();
-        if (ok) showToast('上传成功（已保存为 Data URL，同步后永久生效）', 'success');
-      };
-      reader.readAsDataURL(file);
+      if (ok) showToast('数据统计已保存（临时），请点「一键同步」永久保存', 'success');
     }
 
     function val(id) { return document.getElementById(id)?.value || ''; }
@@ -563,7 +881,7 @@
       t.className = 'toast ' + type;
       t.textContent = msg;
       document.body.appendChild(t);
-      setTimeout(() => t.remove(), 3500);
+      setTimeout(() => t.remove(), 4000);
     }
 
     // 启动
