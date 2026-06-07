@@ -8,7 +8,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 // Admin password hash (SHA-256 of the real password)
-const ADMIN_PASS_HASH = '5b2e4d10b05dddea3e21049b6d58d55fb2879bdbd67b2b7459ee29c726a7b523';
+const ADMIN_PASS_HASH = '8f097dc01367f909a3d5aedfaccc657e0f116fe42b960493cdb9fcd8e9668f88';
 
 function checkAuth(event) {
   const token = (event.headers['x-admin-token'] || event.headers['authorization'] || '').replace('Bearer ', '');
